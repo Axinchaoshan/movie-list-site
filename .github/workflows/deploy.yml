@@ -48,13 +48,16 @@ jobs:
       # 你的真实片单不进仓库，改成用 Secret 注入。
       # 若未配置该 Secret，则自动回退到仓库内的示例数据（4 部占位影片）。
       - name: Inject your movie CSV (optional)
-        if: ${{ secrets.MOVIE_CSV_B64 != '' }}
         env:
           MOVIE_CSV_B64: ${{ secrets.MOVIE_CSV_B64 }}
         run: |
-          mkdir -p data
-          echo "$MOVIE_CSV_B64" | base64 -d > data/movie_master.csv
-          echo "已注入真实片单：$(wc -l < data/movie_master.csv) 行"
+          if [ -n "$MOVIE_CSV_B64" ]; then
+            mkdir -p data
+            echo "$MOVIE_CSV_B64" | base64 -d > data/movie_master.csv
+            echo "已注入真实片单：$(wc -l < data/movie_master.csv) 行"
+          else
+            echo "未配置 MOVIE_CSV_B64，使用仓库示例数据"
+          fi
 
       # 不设置 MOVIE_SRC，让 gen_site.py 走内置回退链：
       #   data/movie_master.csv（上一步注入的）→ data/example_movie_master.csv（示例）
