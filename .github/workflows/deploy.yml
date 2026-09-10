@@ -79,11 +79,13 @@ jobs:
           path: site/
           if-no-files-found: error
 
-  # 部署阶段：仅当配置了 Cloudflare 密钥与项目名时才运行。
+  # 部署阶段：仅在配置了 Cloudflare 项目名（Variables）时运行。
+  # 注：GitHub Actions 的 job 级 if 不能引用 secrets 上下文，只能用 vars，
+  #     因此以 CLOUDFLARE_PROJECT_NAME 变量是否存在作为开关。
   # 未配置时此 job 自动跳过（skip），不会让整条流水线变红。
   deploy:
     needs: build
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' && vars.CLOUDFLARE_PROJECT_NAME != '' }}
+    if: ${{ vars.CLOUDFLARE_PROJECT_NAME != '' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
