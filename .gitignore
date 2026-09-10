@@ -1,0 +1,23 @@
+# ===== 生成产物 =====
+site/
+__pycache__/
+*.pyc
+*.log
+
+# ===== 用户私有数据（按需自行放置，请勿提交）=====
+# 豆瓣短评 / 外部评论 / 评分人数缓存（用户抓取后放这里）
+data/*.json
+# 海报与缩略图（用户提供，git 不追踪）
+assets/posters/*
+assets/thumb/*
+!assets/posters/.gitkeep
+
+# ===== 密钥 / 环境 =====
+.env
+*.pem
+*.key
+*.token
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db
