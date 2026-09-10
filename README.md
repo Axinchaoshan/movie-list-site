@@ -131,7 +131,12 @@ movie-list-site/
 
 ## 自动部署（GitHub Actions）
 
-仓库已内置 `.github/workflows/deploy.yml`：每次 push 到 `main` 会自动生成站点并部署到 Cloudflare Pages，也可以在 Actions 页面手动触发。
+仓库已内置 `.github/workflows/deploy.yml`，分两个阶段：
+
+- **build（始终运行）**：生成静态站点并上传为 artifact。即使没配置任何 Cloudflare 密钥也能跑通。
+- **deploy（按需运行）**：仅在配置了 `CLOUDFLARE_PROJECT_NAME` 这个 **Variable** 时才执行；未配置则自动跳过，整条流水线保持绿色。
+
+每次 push 到 `main` 会自动触发，也可以在 Actions 页面手动触发。
 
 **1. 配置 Secrets**（Settings → Secrets and variables → Actions → Secrets）
 

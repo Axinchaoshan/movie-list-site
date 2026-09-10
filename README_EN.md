@@ -131,7 +131,12 @@ Scripts under `douban_export/` are everyday maintenance helpers; most hit the Do
 
 ## Automatic Deployment (GitHub Actions)
 
-A ready-made workflow lives at `.github/workflows/deploy.yml`. On every push to `main` it generates the site and deploys to Cloudflare Pages.
+A ready-made workflow lives at `.github/workflows/deploy.yml`. It runs in two stages:
+
+- **build (always runs)**: generates the static site and uploads it as an artifact. Succeeds even with no Cloudflare credentials configured.
+- **deploy (on demand)**: only runs when the `CLOUDFLARE_PROJECT_NAME` **Variable** is set; otherwise it is skipped automatically so the whole pipeline stays green.
+
+It triggers on every push to `main`, or you can run it manually from the Actions tab.
 
 **1. Add Secrets** (Settings → Secrets and variables → Actions → Secrets):
 
