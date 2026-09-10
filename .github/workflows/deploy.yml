@@ -25,12 +25,12 @@ concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: true
 
+# 构建阶段：始终运行，并把产物上传为 artifact（即使没配 Cloudflare 也能拿到生成的站）
 jobs:
-  build-deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,6 +71,28 @@ jobs:
           BING_CODE: ${{ secrets.BING_CODE }}
           CF_ANALYTICS: ${{ secrets.CF_ANALYTICS }}
         run: python gen_site.py
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site/
+          if-no-files-found: error
+
+  # 部署阶段：仅当配置了 Cloudflare 密钥与项目名时才运行。
+  # 未配置时此 job 自动跳过（skip），不会让整条流水线变红。
+  deploy:
+    needs: build
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' && vars.CLOUDFLARE_PROJECT_NAME != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
