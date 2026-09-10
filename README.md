@@ -15,6 +15,20 @@
 
 ---
 
+## 效果预览
+
+> 截图来自实际部署站点 `https://movie.dingpin.app`，仓库本身只含示例数据。
+
+**首页**
+
+![首页截图](screenshots/homepage.jpg)
+
+**详情页**
+
+![详情页截图](screenshots/detail-page.png)
+
+---
+
 ## 快速开始
 
 ```bash

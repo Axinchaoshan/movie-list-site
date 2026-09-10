@@ -15,6 +15,20 @@ This repo ships **only the code and toolchain** — the sample data uses placeho
 
 ---
 
+## Screenshots
+
+> These screenshots are from the live deployment at `https://movie.dingpin.app`. This repo only ships sample data.
+
+**Homepage**
+
+![Homepage screenshot](screenshots/homepage.jpg)
+
+**Detail page**
+
+![Detail page screenshot](screenshots/detail-page.png)
+
+---
+
 ## Quick Start
 
 ```bash
