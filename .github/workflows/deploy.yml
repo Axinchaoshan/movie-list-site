@@ -1,0 +1,77 @@
+# 自动生成站点并部署到 Cloudflare Pages
+#
+# 触发：push 到 main 分支，或在 Actions 页面手动点 "Run workflow"
+#
+# 需要的 GitHub Secrets（Settings → Secrets and variables → Actions）：
+#   CLOUDFLARE_API_TOKEN      必填  Cloudflare API Token（需 Pages 编辑权限）
+#   CLOUDFLARE_ACCOUNT_ID     必填  Cloudflare Account ID
+#   MOVIE_CSV_B64             选填  你的真实片单 CSV 的 base64 编码（见 README「自动部署」）
+#   GSC_CODE / BING_CODE      选填  搜索引擎验证码
+#   CF_ANALYTICS              选填  Cloudflare Web Analytics 片段
+#
+# 需要的 GitHub Variables（同页面 Variables 标签页）：
+#   CLOUDFLARE_PROJECT_NAME   必填  Cloudflare Pages 项目名，如 yingwo
+#   SITE_TITLE / SITE_DESC / SITE_URL / TG_URL  选填  站点信息
+
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 并发控制：同分支只保留最新一次部署，避免排队堆积
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 你的真实片单不进仓库，改成用 Secret 注入。
+      # 若未配置该 Secret，则自动回退到仓库内的示例数据（4 部占位影片）。
+      - name: Inject your movie CSV (optional)
+        if: ${{ secrets.MOVIE_CSV_B64 != '' }}
+        env:
+          MOVIE_CSV_B64: ${{ secrets.MOVIE_CSV_B64 }}
+        run: |
+          mkdir -p data
+          echo "$MOVIE_CSV_B64" | base64 -d > data/movie_master.csv
+          echo "已注入真实片单：$(wc -l < data/movie_master.csv) 行"
+
+      # 不设置 MOVIE_SRC，让 gen_site.py 走内置回退链：
+      #   data/movie_master.csv（上一步注入的）→ data/example_movie_master.csv（示例）
+      - name: Generate static site
+        env:
+          SITE_TITLE: ${{ vars.SITE_TITLE }}
+          SITE_DESC: ${{ vars.SITE_DESC }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          TG_URL: ${{ vars.TG_URL }}
+          GSC_CODE: ${{ secrets.GSC_CODE }}
+          BING_CODE: ${{ secrets.BING_CODE }}
+          CF_ANALYTICS: ${{ secrets.CF_ANALYTICS }}
+        run: python gen_site.py
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=${{ vars.CLOUDFLARE_PROJECT_NAME }} --branch main
