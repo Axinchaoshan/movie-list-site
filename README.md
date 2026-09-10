@@ -1,5 +1,7 @@
 # 影窝 · 影视片单静态站生成器
 
+**简体中文 | [English](README_EN.md)**
+
 一个**零框架、零后端**的纯静态影视资源索引站生成器。给定一份 CSV 片单，脚本会产出：
 
 - 流媒体暗色风格的首页（卡片网格 + 搜索 / 筛选 / 排序 + 悬停看简介）
@@ -95,9 +97,12 @@ movie-list-site/
 ├── gen_site.py              # 核心生成器
 ├── comments.js              # 详情页评论区前端脚本
 ├── requirements.txt
-├── README.md
+├── README.md                # 简体中文
+├── README_EN.md             # English
 ├── LICENSE
 ├── .gitignore
+├── .github/
+│   └── workflows/deploy.yml # GitHub Actions 自动部署到 Cloudflare Pages
 ├── data/
 │   └── example_movie_master.csv   # 示例片单（4 行，占位链接）
 ├── assets/
@@ -121,6 +126,41 @@ movie-list-site/
 - `push_tg.py --token <BOT_TOKEN> --chat <频道> --file 文案.md`：把文案发到 Telegram。
 
 > 这些工具不在本仓库存放任何豆瓣 Cookie 或 Telegram Token；如需使用，请自行配置网络与凭证。
+
+---
+
+## 自动部署（GitHub Actions）
+
+仓库已内置 `.github/workflows/deploy.yml`：每次 push 到 `main` 会自动生成站点并部署到 Cloudflare Pages，也可以在 Actions 页面手动触发。
+
+**1. 配置 Secrets**（Settings → Secrets and variables → Actions → Secrets）
+
+| Secret | 必填 | 说明 |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | 是 | Cloudflare API Token（需 Pages 编辑权限） |
+| `CLOUDFLARE_ACCOUNT_ID` | 是 | Cloudflare Account ID |
+| `MOVIE_CSV_B64` | 否 | 你真实片单 CSV 的 base64 编码（这样真实链接就不用进仓库） |
+| `GSC_CODE` / `BING_CODE` | 否 | 搜索引擎验证码 |
+| `CF_ANALYTICS` | 否 | Cloudflare Web Analytics 片段 |
+
+**2. 配置 Variables**（同页面 Variables 标签页）
+
+| Variable | 必填 | 说明 |
+|---|---|---|
+| `CLOUDFLARE_PROJECT_NAME` | 是 | Pages 项目名，如 `yingwo` |
+| `SITE_TITLE` / `SITE_DESC` / `SITE_URL` / `TG_URL` | 否 | 站点信息 |
+
+**3. 把真实片单编码成 Secret**（这样真实网盘链接不用提交到 git）
+
+```bash
+# macOS / Linux
+base64 -i data/movie_master.csv | pbcopy      # 或：base64 -w0 data/movie_master.csv
+
+# Windows PowerShell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("data\movie_master.csv")) | Set-Clipboard
+```
+
+把结果粘到 `MOVIE_CSV_B64`。**不配置也没关系**——构建会自动回退到仓库内的示例数据（4 部占位影片），先跑通流程再换真实数据。
 
 ---
 

@@ -11,7 +11,6 @@
 import csv, json, os, glob, shutil, re, unicodedata, urllib.parse
 from collections import Counter
 from datetime import date
-from datetime import date
 from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
