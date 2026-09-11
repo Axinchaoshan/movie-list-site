@@ -1,5 +1,7 @@
 # Movie List Site Generator
 
+[![Deploy Status](https://github.com/Axinchaoshan/movie-list-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/Axinchaoshan/movie-list-site/actions/workflows/deploy.yml)
+
 A **zero-framework, zero-backend** static site generator for movie/TV collections. Feed it a CSV, and it outputs:
 
 - A dark streaming-style homepage (card grid + search / filter / sort + hover-to-preview synopsis)
@@ -113,6 +115,8 @@ movie-list-site/
 ├── requirements.txt
 ├── README.md                # 简体中文
 ├── README_EN.md             # English
+├── CONTRIBUTING.md          # 贡献指南（简体中文）
+├── CONTRIBUTING_EN.md       # Contributing guide (English)
 ├── LICENSE
 ├── .gitignore
 ├── .github/
@@ -207,3 +211,9 @@ Use "Connect to Git" and set:
 ## License
 
 [MIT](LICENSE) — fork, modify, self-host, or republish freely.
+
+---
+
+## Contributing
+
+Issues, suggestions, and PRs are all welcome. Please read [CONTRIBUTING_EN.md](CONTRIBUTING_EN.md) first.

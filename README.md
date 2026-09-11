@@ -2,6 +2,8 @@
 
 **简体中文 | [English](README_EN.md)**
 
+[![Deploy Status](https://github.com/Axinchaoshan/movie-list-site/actions/workflows/deploy.yml/badge.svg)](https://github.com/Axinchaoshan/movie-list-site/actions/workflows/deploy.yml)
+
 一个**零框架、零后端**的纯静态影视资源索引站生成器。给定一份 CSV 片单，脚本会产出：
 
 - 流媒体暗色风格的首页（卡片网格 + 搜索 / 筛选 / 排序 + 悬停看简介）
@@ -113,6 +115,8 @@ movie-list-site/
 ├── requirements.txt
 ├── README.md                # 简体中文
 ├── README_EN.md             # English
+├── CONTRIBUTING.md          # 贡献指南（简体中文）
+├── CONTRIBUTING_EN.md       # Contributing guide (English)
 ├── LICENSE
 ├── .gitignore
 ├── .github/
@@ -207,3 +211,9 @@ wrangler pages deploy site --project-name <你的项目名> --branch main
 ## 许可证
 
 [MIT](LICENSE) — 欢迎 Fork、改动、自用或二次发布。
+
+---
+
+## 贡献
+
+欢迎提 Issue、建议和 PR！动手前请先读 [贡献指南](CONTRIBUTING.md)。
